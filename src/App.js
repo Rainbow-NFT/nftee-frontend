@@ -30,9 +30,9 @@ const App = () => {
   /// ============ Wallet Stuff ============
 
   // Checks if the browser has Metamask
-const checkIfWalletIsConnected = () => {
-  const {ethereum} = window;
-  if (!ethereum) {
+  const checkIfWalletIsConnected = () => {
+    const {ethereum} = window;
+    if (!ethereum) {
     console.log("Metamask not installed");
     return;
   } else {
@@ -58,6 +58,8 @@ const checkIfWalletIsConnected = () => {
       console.log(error);
     }
   }
+
+    /// ============ Mint NFT ============
 
   const mintNFT = async () => {
     // Rinkeby Address
@@ -87,19 +89,19 @@ const checkIfWalletIsConnected = () => {
         console.log(error)
     }
 
-}
+  }
 
   /// ============ Render Stuff ============
 
   // Render Methods
   const renderNotConnectedContainer = () => (
-<button onClick={connectWallet} className="cta-button connect-wallet-button">
+  <button onClick={connectWallet} className="cta-button connect-wallet-button">
       Connect to Wallet
     </button>);
 
-useEffect(() => {
-  checkIfWalletIsConnected();
-}, [])
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, [])
 
 
   /// ============ Return Page ============
@@ -108,9 +110,9 @@ useEffect(() => {
     <div className="App">
       <div className="container">
         <div className="header-container">
-          <p className="header gradient-text">My NFT Collection</p>
+          <p className="header gradient-text">Groovy NFTs</p>
           <p className="sub-text">
-            Each unique. Each beautiful. Discover your NFT today.
+            Each uniquely generated, completely on chain.
           </p>
           {currentAccount === "" ? (
             renderNotConnectedContainer()
