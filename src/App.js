@@ -1,8 +1,10 @@
 import React, { useEffect, useState} from "react";
 import {ethers} from "ethers";
+
+// ABI Imports
 import WowNFT from "./abi/WowNFT.json"
 
-// Styling & logos
+// Styling & Logos
 import './styles/App.css';
 import twitterLogo from './assets/twitter-logo.svg';
 import opensealogo from './assets/opensea-logo.svg';
