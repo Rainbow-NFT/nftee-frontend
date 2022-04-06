@@ -14,12 +14,18 @@ import etherscanlogo from './assets/etherscan-logo.svg';
 
 /// ============ Constants ============
 // Rinkeby Address
-const CONTRACT_ADDRESS = "0x26f46Eac23c7De8abcF8c5fE59f8AB51A13B40aF";
+const CONTRACT_ADDRESS = "0xdCB96551E07E719C300bBE4d045358DeB9897baf";
 
 // Links
 const TWITTER_HANDLE = 'abran_decarlo';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
+
+// Asset Marketplace Links
 const OPENSEA_COLLECTION_LINK = `https://testnets.opensea.io/assets/wow-genbkasdgk`;
+const RARIBLE_COLLECTION_LINK = `https://rinkeby.rarible.com/collection/${CONTRACT_ADDRESS}/items`;
+const ETHERSCAN_LINK = `https://rinkeby.etherscan.io/address/${CONTRACT_ADDRESS}`;
+
+// Counters
 const TOTAL_MINT_COUNT = 50;
 
 /// ============ Main App ============
@@ -54,6 +60,8 @@ const App = () => {
     
       console.log("Connected", accounts[0]);
       setCurrentAccount(accounts[0]);
+
+      setupEventListener()
     } catch (error) {
       console.log(error);
     }
@@ -91,7 +99,38 @@ const App = () => {
 
   }
 
+  /// ============ Event Listeners ============
+  const setupEventListener = async () => {
+
+    try {
+      const { ethereum } = window;
+      
+      if (ethereum) {
+        // can we make it so we don't have to copy & paste the same code again?
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, WowNFT.abi, signer);
+
+        connectedContract.on("NewNFTMinted", (from, tokenId) => {
+          console.log(from, tokenId.toNumber())
+          alert(`NFT minted and it has been sent to your wallet.  It may take up to 15 min for it to show up on OpenSea.`);
+          alert(`https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`);
+        }); 
+
+        console.log("Event listener setup");
+      } else {
+        console.log("Ethereum object doesn't exist");
+      } 
+      } catch (error) {
+        console.log(error)
+    } 
+  }
+
   /// ============ Render Stuff ============
+
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, [])
 
   // Render Methods
   const renderNotConnectedContainer = () => (
@@ -99,9 +138,11 @@ const App = () => {
       Connect to Wallet
     </button>);
 
-  useEffect(() => {
-    checkIfWalletIsConnected();
-  }, [])
+  const renderMintUI = () => (
+    <button onClick={mintNFT} className="cta-button connect-wallet-button">
+      Mint NFT
+    </button>
+  )
 
 
   /// ============ Return Page ============
@@ -116,10 +157,7 @@ const App = () => {
           </p>
           {currentAccount === "" ? (
             renderNotConnectedContainer()
-          ) : (
-            <button onClick={mintNFT} className="cta-button connect-wallet-button">
-              Mint NFT
-            </button>)}
+          ) : renderMintUI()}
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
@@ -134,7 +172,7 @@ const App = () => {
             target="_blank"
             rel="noreferrer"
             // just use CSS later lmao
-          >&nbsp;&nbsp;&nbsp;&nbsp;Collection on:&nbsp;&nbsp;</a>
+          >&nbsp;&nbsp;&nbsp;&nbsp;View Collection on:&nbsp;&nbsp;</a>
           <a
             className="footer-text"
             href={OPENSEA_COLLECTION_LINK}
@@ -143,13 +181,13 @@ const App = () => {
           >{<img alt="Opensea Logo" className="opensea-logo" src={opensealogo} />}</a>
            <a
             className="footer-text"
-            
+            href={RARIBLE_COLLECTION_LINK}
             target="_blank"
             rel="noreferrer"
           >{<img alt="Rarible Logo" className="rarible-logo" src={rariblelogo} />}</a>
           <a
             className="footer-text"
-            
+            href={ETHERSCAN_LINK}
             target="_blank"
             rel="noreferrer"
           >{<img alt="Etherscan Logo" className="etherscan-logo" src={etherscanlogo} />}</a>
