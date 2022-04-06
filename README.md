@@ -3,10 +3,12 @@
 ### Name in progress
 
 ## Getting Started
-To get started, clone this repo and follow these commands:
+
 ```
-1. Run `npm install` at the root of your directory
-2. Run `npm run start` to start the project
+1. git clone https://github.com/abrandec/nftee-frontend.git
+2. cd nftee-frontend
+3. npm install
+4. npm run start
 ```
 ## Acknowledgements
 - [buildspace-nft-course-starter](https://github.com/buildspace/buildspace-nft-course-starter)
