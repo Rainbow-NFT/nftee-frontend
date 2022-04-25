@@ -42,11 +42,22 @@ var TOTAL_TOKEN_AMOUNT = Number(10000);
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
   const [tokenId, setTokenId] = React.useState("");
-  /// ============ Fetch Tokens Left ============
 
+  /// ============ API REQUEST ============
+  
+  // Fetch tokens left
+  // Bruh this calls after every render
+  // TODO: FIX
   useState((async () =>{
     request('https://secure-shore-07844.herokuapp.com/currentTokenId', function (error, response, body) {
-      console.log(body); // Print the HTML for the Google homepage.
+    
+    if (error != null) {
+      console.log(error)
+    }
+      console.log(response)
+      console.log(`Tokens left: ${TOTAL_TOKEN_AMOUNT - Number(body)}`);
+
+      // Update tokenId
       setTokenId(Number(body));
     });
     }
@@ -116,8 +127,6 @@ const App = () => {
   useEffect(() => {
     checkIfWalletIsConnected();
   }, [])
-
-  useState()
 
   // Render Methods
   const renderNotConnectedContainer = () => (
