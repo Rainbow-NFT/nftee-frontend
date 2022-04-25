@@ -58,7 +58,7 @@ const App = () => {
       console.log(`Tokens left: ${TOTAL_TOKEN_AMOUNT - Number(body)}`);
 
       // Update tokenId
-      setTokenId(Number(body));
+      setTokenId(Number(10000) - Number(body));
     });
     }
   )()); 
