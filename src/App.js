@@ -41,18 +41,11 @@ var TOTAL_TOKEN_AMOUNT = Number(10000);
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
-  const [tokenId, setTokenId] = React.useState("");
+  const [tokenId, setTokenId] = React.useState('X');
 
   /// ============ API REQUEST ============
   
   // Fetch tokens left
-  // Bruh this calls after every render, 8x too many if just loading the webpage once
-  // TODO: FIX
-  useState((async () =>{
- 
-    }
-  )()); 
-
   useEffect(() => {
     request('https://secure-shore-07844.herokuapp.com/currentTokenId', function (error, response, body) {
     
@@ -98,9 +91,6 @@ const App = () => {
     }
   }
 
-
-
-
   /// ============ Mint NFT ============
 
   const mintNFT = async () => {
@@ -132,19 +122,29 @@ const App = () => {
   useEffect(() => {
     checkIfWalletIsConnected();
   }, [])
-
-  // Render Methods
-  const renderNotConnectedContainer = () => (
-  <button onClick={connectWallet} className="cta-button connect-wallet-button">
-      Connect to Wallet
-    </button>);
   
-  const renderMintUI = () => (
-    <button onClick={mintNFT} className="cta-button connect-wallet-button">
-      Mint NFT
-    </button>
-  )
+  // Render Methods
+  function RenderNotConnectedContainer() {
+    return <button onClick={connectWallet} className="cta-button connect-wallet-button">
+    Connect to Wallet
+  </button>;
+  }
+  
+  function RenderMintUI() {
+    return <button onClick={mintNFT} className="cta-button connect-wallet-button">
+    Mint NFT
+    </button>;
+  }  
 
+  function RenderButton(props) {
+    const isConnected = props.isConnected;
+    if (isConnected) {
+      return <RenderMintUI/>;
+    }
+    return <RenderNotConnectedContainer/>;
+  }
+  
+  
   /// ============ Return Page ============
 
   return (
@@ -155,9 +155,7 @@ const App = () => {
           <p className="sub-text">
             Each uniquely generated, bitpacked on-chain.
           </p>
-          {currentAccount === "" ? (
-            renderNotConnectedContainer()
-          ) : renderMintUI()}
+          <RenderButton isConnected = {true} />
         </div>
         <p className="sub-text">{tokenId}/{TOTAL_TOKEN_AMOUNT} NFTs left</p>
         <div className="footer-container">
