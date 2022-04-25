@@ -46,7 +46,7 @@ const App = () => {
   /// ============ API REQUEST ============
   
   // Fetch tokens left
-  // Bruh this calls after every render
+  // Bruh this calls after every render, 8x too many if just loading the webpage once
   // TODO: FIX
   useState((async () =>{
     request('https://secure-shore-07844.herokuapp.com/currentTokenId', function (error, response, body) {
