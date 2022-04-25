@@ -58,7 +58,7 @@ const App = () => {
       console.log(`Tokens left: ${TOTAL_TOKEN_AMOUNT - Number(body)}`);
 
       // Update tokenId
-      setTokenId(Number(10000) - Number(body));
+      setTokenId(TOTAL_TOKEN_AMOUNT - Number(body));
     });
     }
   )()); 
@@ -111,7 +111,7 @@ const App = () => {
             await nftTxn.wait();
             console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
             const _tokenId = await connectedContract.currentTokenId();
-            setTokenId(Number(10000) - Number(_tokenId));
+            setTokenId(TOTAL_TOKEN_AMOUNT - Number(_tokenId));
            
         } else {
             console.log("Ethereum object doesn't exist!");
