@@ -110,7 +110,7 @@ const App = () => {
             console.log("⛏️ Mining in progress... please wait");
             await nftTxn.wait();
             console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
-            const _tokenId = await connectedContract.currentTokenId
+            const _tokenId = await connectedContract.currentTokenId();
             setTokenId(Number(10000) - Number(_tokenId));
            
         } else {
