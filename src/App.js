@@ -49,21 +49,24 @@ const App = () => {
   // Bruh this calls after every render, 8x too many if just loading the webpage once
   // TODO: FIX
   useState((async () =>{
-    request('https://secure-shore-07844.herokuapp.com/currentTokenId', function (error, response, body) {
-    
-    if (error != null) {
-      console.log(error)
-    }
-      console.log(response)
-      console.log(`Tokens left: ${TOTAL_TOKEN_AMOUNT - Number(body)}`);
-
-      // Update tokenId
-      setTokenId(TOTAL_TOKEN_AMOUNT - Number(body));
-    });
+ 
     }
   )()); 
 
+  useEffect(() => {
+    request('https://secure-shore-07844.herokuapp.com/currentTokenId', function (error, response, body) {
+    
+      if (error != null) {
+        console.log(error)
+      }
+        console.log(response)
+        console.log(`Tokens left: ${TOTAL_TOKEN_AMOUNT - Number(body)}`);
   
+        // Update tokenId
+        setTokenId(TOTAL_TOKEN_AMOUNT - Number(body));
+      });
+  }, []);
+
    /// ============ Connect Wallet ============
 
     // Checks if the browser has Metamask
@@ -94,6 +97,8 @@ const App = () => {
       console.log(error);
     }
   }
+
+
 
 
   /// ============ Mint NFT ============
