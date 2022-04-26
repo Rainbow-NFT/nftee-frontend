@@ -126,6 +126,14 @@ a {
   padding: 10px 20px;
 }
 
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  height: 50%;
+}
+
 span {
   padding-right: 30px;
   padding-bottom: 4px;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 
 // CURL Imports
+// Outdated, IK
 import request from 'request';
 
 // ABI Imports
@@ -133,6 +134,8 @@ const App = () => {
         );
         const _tokenId = await connectedContract.currentTokenId();
         setTokenId(TOTAL_TOKEN_AMOUNT - Number(_tokenId));
+        /*     const NFT_URI = await connectedContract.tokenURI(_tokenId);
+         */
       } else {
         console.log("Ethereum object doesn't exist!");
       }
@@ -156,6 +159,7 @@ const App = () => {
     const { ethereum } = window;
     if (ethereum) {
       const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+      // Don't remove 'newNetwork' or it gets stuck in an infinite loop
       provider.on('network', (newNetwork, oldNetwork) => {
         if (oldNetwork) {
           window.location.reload();
@@ -201,10 +205,6 @@ const App = () => {
     );
   }
 
-  function RenderBlankUI() {
-    return <div />;
-  }
-
   /// ============ Props ============
 
   function RenderButton(props) {
@@ -221,7 +221,19 @@ const App = () => {
     if (isRightNetwork) {
       return <RenderBannerUI />;
     }
-    return <RenderBlankUI />;
+    return <div />;
+  }
+
+  // This is so lazy lmao
+  // TODO: Actually fetch token uri + disallow XSS when enabling this, don't want future footguns
+  function RenderTokenURI() {
+    return (
+      <img
+        alt="token-uri"
+        className="center"
+        src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaW5ZTWluIG1lZXQnIHZpZXdCb3g9JzAgMCAzNTAgMzUwJz48cmVjdCB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyBmaWxsPSd1cmwoI3BhdHRlcm4pJyAvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0nZ3JhZGllbnQnIHgxPScxMDAlJyB5MT0nMTAlJyB4Mj0nMCUnIHkyPScxMCUnPjxzdG9wIG9mZnNldD0nNi4yNSUnIHN0b3AtY29sb3I9JyM4N2ZmZmUnLz48c3RvcCBvZmZzZXQ9JzE4Ljc1JScgc3RvcC1jb2xvcj0nIzg4ZmY4OScvPjxzdG9wIG9mZnNldD0nMzEuMjUlJyBzdG9wLWNvbG9yPScjZjhmNThhJy8+PHN0b3Agb2Zmc2V0PSc1Ni4yNSUnIHN0b3AtY29sb3I9JyNlZjY5NmEnLz48c3RvcCBvZmZzZXQ9JzY4Ljc1JScgc3RvcC1jb2xvcj0nI2YzNmFiYScvPjxzdG9wIG9mZnNldD0nODEuMjUlJyBzdG9wLWNvbG9yPScjZWY2OTZhJy8+PHN0b3Agb2Zmc2V0PSc5My43NSUnIHN0b3AtY29sb3I9JyNmOGY1OGEnLz48c3RvcCBvZmZzZXQ9JzEwMCUnIHN0b3AtY29sb3I9JyM4OGZmODknLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0dGVybiBpZD0ncGF0dGVybicgeD0nMCcgeT0nMCcgd2lkdGg9JzQwMCUnIGhlaWdodD0nMTAwJScgcGF0dGVyblVuaXRzPSd1c2VyU3BhY2VPblVzZSc+PHJlY3QgeD0nLTE1MCUnIHk9JzAnIHdpZHRoPScyMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbGw9J3VybCgjZ3JhZGllbnQpJyB0cmFuc2Zvcm09J3JvdGF0ZSgtNjUpJz48YW5pbWF0ZSBhdHRyaWJ1dGVUeXBlPSdYTUwnIGF0dHJpYnV0ZU5hbWU9J3gnIGZyb209Jy0xNTAlJyB0bz0nNTAlJyBkdXI9JzEwMDAwbXMnIHJlcGVhdENvdW50PSdpbmRlZmluaXRlJy8+PC9yZWN0PjxyZWN0IHg9Jy0zNTAlJyB5PScwJyB3aWR0aD0nMjAwJScgaGVpZ2h0PScxMDAlJyBmaWxsPSd1cmwoI2dyYWRpZW50KScgdHJhbnNmb3JtPSdyb3RhdGUoLTY1KSc+PGFuaW1hdGUgYXR0cmlidXRlVHlwZT0nWE1MJyBhdHRyaWJ1dGVOYW1lPSd4JyBmcm9tPSctMzUwJScgdG89Jy0xNTAlJyBkdXI9JzEwMDAwbXMnIHJlcGVhdENvdW50PSdpbmRlZmluaXRlJy8+PC9yZWN0PjwvcGF0dGVybj48L3N2Zz4="
+      />
+    );
   }
 
   /// ============ Return Page ============
@@ -232,9 +244,10 @@ const App = () => {
         <RenderBanner isRightNetwork={correctNetwork} />
         <div className="header-container">
           <p className="header gradient-text">Rainbow NFTs</p>
-          <p className="sub-text">Each &quot;uniquely&quot; generated, bitpacked on-chain.</p>
+          <p className="sub-text">Each &quot;uniquely&quot; generated & bitpacked on-chain.</p>
           <RenderButton isConnected={boolBeans} />
         </div>
+        <RenderTokenURI />
         <p className="sub-text">
           {tokenId}/{TOTAL_TOKEN_AMOUNT} NFTs left
         </p>
