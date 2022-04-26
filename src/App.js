@@ -10,10 +10,10 @@ import SvgBitpack from './abi/SvgBitpack.json';
 // Styling & Logos
 import './styles/App.css';
 import twitterLogo from './assets/twitter-logo.svg';
-import opensealogo from './assets/opensea-logo.svg';
-import rariblelogo from './assets/rarible-logo.svg';
-import etherscanlogo from './assets/etherscan-logo.svg';
-import githublogo from './assets/github-logo-white.svg';
+import openseaLogo from './assets/opensea-logo.svg';
+import raribleLogo from './assets/rarible-logo.svg';
+import etherscanLogo from './assets/etherscan-logo.svg';
+import githubLogo from './assets/github-logo.svg';
 
 /// ============ Constants ============
 
@@ -43,6 +43,7 @@ const App = () => {
   const [setCurrentAccount] = useState('');
   const [tokenId, setTokenId] = useState('X');
   const [boolBeans, isBoolBeans] = useState(0);
+  const [correctNetwork, isCorrectNetwork] = useState(0);
 
   /// ============ API REQUEST ============
 
@@ -54,7 +55,7 @@ const App = () => {
         if (error != null) {
           console.log(error);
         }
-        console.log(response);
+        console.log(`API_GET_RESPONSE: OK`);
         console.log(`Tokens left: ${TOTAL_TOKEN_AMOUNT - Number(body)}`);
 
         // Update tokenId
@@ -67,15 +68,28 @@ const App = () => {
 
   // Checks if the browser has Metamask
   const checkIfWalletIsConnected = () => {
-    const { ethereum } = window;
-    if (!ethereum) {
-      console.log('Metamask not installed');
-      isBoolBeans(false);
-      return;
-    } else {
-      console.log('🦊 Metamask found', ethereum);
-      isBoolBeans(true);
-    }
+    (async () => {
+      const { ethereum } = window;
+      if (!ethereum) {
+        console.log('Metamask not installed');
+        isBoolBeans(false);
+        return;
+      } else {
+        console.log('Metamask found 🦊', ethereum);
+        isBoolBeans(true);
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const network = await provider.getNetwork();
+        const chainId = network.chainId;
+        console.log(chainId);
+        // Rinkeby ChainId == 4
+        // Need to detect when network changes rather than only check during first page load.
+        if (chainId !== 4) {
+          isCorrectNetwork(true);
+        } else if (chainId == 4) {
+          isCorrectNetwork(false);
+        }
+      }
+    })();
   };
 
   const connectWallet = async () => {
@@ -83,13 +97,12 @@ const App = () => {
       const { ethereum } = window;
 
       if (!ethereum) {
-        alert('Get 🦊 Metamask!');
+        alert('Get Metamask! 🦊');
         return;
       }
       const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
       console.log('Connected', accounts[0]);
       setCurrentAccount(accounts[0]);
-
     } catch (error) {
       console.log(error);
     }
@@ -123,7 +136,7 @@ const App = () => {
 
   useEffect(() => {
     checkIfWalletIsConnected();
-  }, [boolBeans]);
+  }, []);
 
   // Render Methods
   function RenderNotConnectedContainer() {
@@ -142,6 +155,25 @@ const App = () => {
     );
   }
 
+  function RenderBannerUI() {
+    return (
+      <div className="banner">
+        <span color="black">You are connected to the wrong network, please switch to Rinkeby.</span>
+        <div>
+          <button className="switch-network-button">
+            <i>Switch Network</i>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  function RenderBlankUI() {
+    return <div />;
+  }
+
+  /// ============ Props ============
+
   function RenderButton(props) {
     const isConnected = props.isConnected;
 
@@ -151,14 +183,23 @@ const App = () => {
     return <RenderNotConnectedContainer />;
   }
 
+  function RenderBanner(props) {
+    const isRightNetwork = props.isRightNetwork;
+    if (isRightNetwork) {
+      return <RenderBannerUI />;
+    }
+    return <RenderBlankUI />;
+  }
+
   /// ============ Return Page ============
 
   return (
     <div className="App">
       <div className="container">
+        <RenderBanner isRightNetwork={correctNetwork} />
         <div className="header-container">
           <p className="header gradient-text">Rainbow NFTs</p>
-          <p className="sub-text">Each uniquely generated, bitpacked on-chain.</p>
+          <p className="sub-text">Each &quot;uniquely&quot; generated, bitpacked on-chain.</p>
           <RenderButton isConnected={boolBeans} />
         </div>
         <p className="sub-text">
@@ -178,7 +219,7 @@ const App = () => {
             target="_blank"
             rel="noreferrer"
           >
-            {<img alt="Opensea Logo" className="opensea-logo" src={opensealogo} />}
+            {<img alt="Opensea Logo" className="opensea-logo" src={openseaLogo} />}
           </a>
           <a
             className="footer-text"
@@ -186,13 +227,13 @@ const App = () => {
             target="_blank"
             rel="noreferrer"
           >
-            {<img alt="Rarible Logo" className="rarible-logo" src={rariblelogo} />}
+            {<img alt="Rarible Logo" className="rarible-logo" src={raribleLogo} />}
           </a>
           <a className="footer-text" href={ETHERSCAN_LINK} target="_blank" rel="noreferrer">
-            {<img alt="Etherscan Logo" className="etherscan-logo" src={etherscanlogo} />}
+            {<img alt="Etherscan Logo" className="etherscan-logo" src={etherscanLogo} />}
           </a>
           <a className="footer-text" href={GITHUB_REPO} target="_blank" rel="noreferrer">
-            {<img alt="Github Logo" className="github-logo" src={githublogo} />}
+            {<img alt="Github Logo" className="github-logo" src={githubLogo} />}
           </a>
         </div>
       </div>
