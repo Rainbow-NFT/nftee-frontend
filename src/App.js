@@ -56,7 +56,7 @@ const App = () => {
           console.log(error);
         }
         console.log(`API_GET_RESPONSE: OK`);
-        console.log(`Tokens left: ${TOTAL_TOKEN_AMOUNT - Number(body)}`);
+        console.log(`Tokens left to mint: ${TOTAL_TOKEN_AMOUNT - Number(body)}`);
 
         // Update tokenId
         setTokenId(TOTAL_TOKEN_AMOUNT - Number(body));
@@ -80,11 +80,12 @@ const App = () => {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const network = await provider.getNetwork();
         const chainId = network.chainId;
-        console.log(chainId);
+        console.log(`chainId: ${chainId}`);
         // Rinkeby ChainId == 4
         // Need to detect when network changes rather than only check during first page load.
         if (chainId !== 4) {
           isCorrectNetwork(true);
+          console.log(`Wrong network, switch to Rinkeby`);
         } else if (chainId == 4) {
           isCorrectNetwork(false);
         }
@@ -132,6 +133,15 @@ const App = () => {
     }
   };
 
+  // Detect network change
+  {
+    const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+    provider.on('network', (newNetwork, oldNetwork) => {
+      if (oldNetwork) {
+        window.location.reload();
+      }
+    });
+  }
   /// ============ Render Stuff ============
 
   useEffect(() => {
