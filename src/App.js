@@ -17,6 +17,11 @@ import githubLogo from './assets/github-logo.svg';
 
 /// ============ Constants ============
 
+// chainId Stuff
+const NETWORK_NAME = 'Rinkeby';
+const ETHERSCAN_PREFIX = 'rinkeby.';
+const NETWORK_ID = 4;
+
 // Rinkeby Address
 const CONTRACT_ADDRESS = '0xce4346e22dD8288D2971416d29E99DB22385E0A4';
 
@@ -28,8 +33,8 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 // Asset Links
 const OPENSEA_COLLECTION_LINK = `https://testnets.opensea.io/assets/rainbow-nft`;
-const RARIBLE_COLLECTION_LINK = `https://rinkeby.rarible.com/collection/${CONTRACT_ADDRESS}/items`;
-const ETHERSCAN_LINK = `https://rinkeby.etherscan.io/address/${CONTRACT_ADDRESS}`;
+const RARIBLE_COLLECTION_LINK = `https://${ETHERSCAN_PREFIX}rarible.com/collection/${CONTRACT_ADDRESS}/items`;
+const ETHERSCAN_LINK = `https://${ETHERSCAN_PREFIX}etherscan.io/address/${CONTRACT_ADDRESS}`;
 
 // Github Org Repo
 const GITHUB_REPO = `https://github.com/Rainbow-NFT`;
@@ -83,10 +88,10 @@ const App = () => {
         console.log(`chainId: ${chainId}`);
         // Rinkeby ChainId == 4
         // Need to detect when network changes rather than only check during first page load.
-        if (chainId !== 4) {
+        if (chainId !== NETWORK_ID) {
           isCorrectNetwork(true);
-          console.log(`Wrong network, switch to Rinkeby`);
-        } else if (chainId == 4) {
+          console.log(`Wrong network, switch to ${NETWORK_NAME}`);
+        } else if (chainId == NETWORK_ID) {
           isCorrectNetwork(false);
         }
       }
@@ -101,6 +106,7 @@ const App = () => {
         alert('Get Metamask! 🦊');
         return;
       }
+
       const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
       console.log('Connected', accounts[0]);
       setCurrentAccount(accounts[0]);
@@ -122,7 +128,9 @@ const App = () => {
         let nftTxn = await connectedContract.mintTo(signer.getAddress());
         console.log('⛏️ Mining in progress... please wait');
         await nftTxn.wait();
-        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
+        console.log(
+          `Mined, see transaction: https://${ETHERSCAN_PREFIX}etherscan.io/tx/${nftTxn.hash}`
+        );
         const _tokenId = await connectedContract.currentTokenId();
         setTokenId(TOTAL_TOKEN_AMOUNT - Number(_tokenId));
       } else {
@@ -133,17 +141,27 @@ const App = () => {
     }
   };
 
+  // Change Network
+  const changeNetwork = async () => {
+    (async () => {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x' + NETWORK_ID.toString(16) }]
+      });
+    })();
+  };
+
   // Detect network change
   {
     const { ethereum } = window;
     if (ethereum) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
-    provider.on('network', (newNetwork, oldNetwork) => {
-      if (oldNetwork) {
-        window.location.reload();
-      }
-    });
-  }
+      const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+      provider.on('network', (newNetwork, oldNetwork) => {
+        if (oldNetwork) {
+          window.location.reload();
+        }
+      });
+    }
   }
   /// ============ Render Stuff ============
 
@@ -171,9 +189,11 @@ const App = () => {
   function RenderBannerUI() {
     return (
       <div className="banner">
-        <span color="black">You are connected to the wrong network, please switch to Rinkeby.</span>
+        <span color="black">
+          You are connected to the wrong network, please switch to {NETWORK_NAME}{' '}
+        </span>
         <div>
-          <button className="switch-network-button">
+          <button onClick={changeNetwork} className="switch-network-button">
             <i>Switch Network</i>
           </button>
         </div>
