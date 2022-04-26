@@ -50,6 +50,8 @@ const App = () => {
   const [tokenId, setTokenId] = useState('X');
   const [boolBeans, isBoolBeans] = useState(0);
   const [correctNetwork, isCorrectNetwork] = useState(0);
+  const [imageURI, isImageURI] = useState('');
+  const [minted, isMinted] = useState(0);
 
   /// ============ API REQUEST ============
 
@@ -133,6 +135,14 @@ const App = () => {
           `Mined, see transaction: https://${ETHERSCAN_PREFIX}etherscan.io/tx/${nftTxn.hash}`
         );
         const _tokenId = await connectedContract.currentTokenId();
+        const tokenURI_ = await connectedContract.tokenURI(_tokenId);
+        (async function () {
+          const response = await fetch(tokenURI_);
+          const _image = await response.json();
+          console.log(_image.image);
+          isImageURI(_image.image);
+          isMinted(true);
+        })();
         setTokenId(TOTAL_TOKEN_AMOUNT - Number(_tokenId));
         /*     const NFT_URI = await connectedContract.tokenURI(_tokenId);
          */
@@ -167,6 +177,7 @@ const App = () => {
       });
     }
   }
+
   /// ============ Render Stuff ============
 
   useEffect(() => {
@@ -205,6 +216,27 @@ const App = () => {
     );
   }
 
+  function NotYourNFT() {
+    return(
+      <div>
+      <div className='parent-div'>
+      </div>
+      <p className='sub-text'>Not your NFT</p>
+      </div>
+    );
+  }
+
+  function YourNFT() {
+    return(
+      <div className='center'>
+      <div >
+        <img alt='lol' src={imageURI}/>
+      </div>
+      <p className='sub-text'>Your nft</p>
+      </div>
+    );
+  }
+
   /// ============ Props ============
 
   function RenderButton(props) {
@@ -224,16 +256,12 @@ const App = () => {
     return <div />;
   }
 
-  // This is so lazy lmao
-  // TODO: Actually fetch token uri + disallow XSS when enabling this, don't want future footguns
-  function RenderTokenURI() {
-    return (
-      <img
-        alt="token-uri"
-        className="center"
-        src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaW5ZTWluIG1lZXQnIHZpZXdCb3g9JzAgMCAzNTAgMzUwJz48cmVjdCB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyBmaWxsPSd1cmwoI3BhdHRlcm4pJyAvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0nZ3JhZGllbnQnIHgxPScxMDAlJyB5MT0nMTAlJyB4Mj0nMCUnIHkyPScxMCUnPjxzdG9wIG9mZnNldD0nNi4yNSUnIHN0b3AtY29sb3I9JyM4N2ZmZmUnLz48c3RvcCBvZmZzZXQ9JzE4Ljc1JScgc3RvcC1jb2xvcj0nIzg4ZmY4OScvPjxzdG9wIG9mZnNldD0nMzEuMjUlJyBzdG9wLWNvbG9yPScjZjhmNThhJy8+PHN0b3Agb2Zmc2V0PSc1Ni4yNSUnIHN0b3AtY29sb3I9JyNlZjY5NmEnLz48c3RvcCBvZmZzZXQ9JzY4Ljc1JScgc3RvcC1jb2xvcj0nI2YzNmFiYScvPjxzdG9wIG9mZnNldD0nODEuMjUlJyBzdG9wLWNvbG9yPScjZWY2OTZhJy8+PHN0b3Agb2Zmc2V0PSc5My43NSUnIHN0b3AtY29sb3I9JyNmOGY1OGEnLz48c3RvcCBvZmZzZXQ9JzEwMCUnIHN0b3AtY29sb3I9JyM4OGZmODknLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0dGVybiBpZD0ncGF0dGVybicgeD0nMCcgeT0nMCcgd2lkdGg9JzQwMCUnIGhlaWdodD0nMTAwJScgcGF0dGVyblVuaXRzPSd1c2VyU3BhY2VPblVzZSc+PHJlY3QgeD0nLTE1MCUnIHk9JzAnIHdpZHRoPScyMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbGw9J3VybCgjZ3JhZGllbnQpJyB0cmFuc2Zvcm09J3JvdGF0ZSgtNjUpJz48YW5pbWF0ZSBhdHRyaWJ1dGVUeXBlPSdYTUwnIGF0dHJpYnV0ZU5hbWU9J3gnIGZyb209Jy0xNTAlJyB0bz0nNTAlJyBkdXI9JzEwMDAwbXMnIHJlcGVhdENvdW50PSdpbmRlZmluaXRlJy8+PC9yZWN0PjxyZWN0IHg9Jy0zNTAlJyB5PScwJyB3aWR0aD0nMjAwJScgaGVpZ2h0PScxMDAlJyBmaWxsPSd1cmwoI2dyYWRpZW50KScgdHJhbnNmb3JtPSdyb3RhdGUoLTY1KSc+PGFuaW1hdGUgYXR0cmlidXRlVHlwZT0nWE1MJyBhdHRyaWJ1dGVOYW1lPSd4JyBmcm9tPSctMzUwJScgdG89Jy0xNTAlJyBkdXI9JzEwMDAwbXMnIHJlcGVhdENvdW50PSdpbmRlZmluaXRlJy8+PC9yZWN0PjwvcGF0dGVybj48L3N2Zz4="
-      />
-    );
+  function RenderTokenURI(props) {
+    const isMinted = props.isMinted;
+    if (isMinted) {
+    return <YourNFT/>; 
+  }
+    return <NotYourNFT/>;
   }
 
   /// ============ Return Page ============
@@ -245,12 +273,18 @@ const App = () => {
         <div className="header-container">
           <p className="header gradient-text">Rainbow NFTs</p>
           <p className="sub-text">Each &quot;uniquely&quot; generated & bitpacked on-chain.</p>
+          
           <RenderButton isConnected={boolBeans} />
         </div>
-        <RenderTokenURI />
+     
+        <RenderTokenURI isMinted={minted}/>
+       
+       
+      <div className='texty'>
         <p className="sub-text">
           {tokenId}/{TOTAL_TOKEN_AMOUNT} NFTs left
         </p>
+        </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
           <a

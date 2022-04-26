@@ -130,13 +130,23 @@ a {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 50%;
-  height: 50%;
+  width: 60%;
+  height: 250%;
+  padding-top: 5%;
 }
 
-span {
+.span {
   padding-right: 30px;
   padding-bottom: 4px;
+}
+
+.parent-div {
+  margin: 10px auto 20px;
+    display: block;
+}
+
+.texty {
+  padding-top: 20%;
 }
 
 /* KeyFrames */
