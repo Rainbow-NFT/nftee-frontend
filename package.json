@@ -18,7 +18,8 @@
     "start": "BROWSER=none react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "lint": "eslint \"src/**/*.{js,jsx}\" && prettier --write 'src/**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
+    "lint": "eslint \"src/**/*.{js,jsx}\"",
+    "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

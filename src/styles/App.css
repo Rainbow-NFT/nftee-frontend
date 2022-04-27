@@ -133,6 +133,8 @@ a {
   width: 60%;
   height: 250%;
   padding-top: 5%;
+  max-height: 20%;
+  max-width: 20%;
 }
 
 .span {
@@ -142,7 +144,7 @@ a {
 
 .parent-div {
   margin: 10px auto 20px;
-    display: block;
+  display: block;
 }
 
 .texty {

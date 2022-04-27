@@ -55,11 +55,11 @@ const App = () => {
 
   /// ============ API REQUEST ============
 
-  // Fetch tokens left
   useEffect(() => {
+    // Fetch tokens left
     request(
       'https://secure-shore-07844.herokuapp.com/currentTokenId',
-      function (error, response, body) {
+      function FetchCurrentTokenId(error, response, body) {
         if (error != null) {
           console.log(error);
         }
@@ -68,6 +68,25 @@ const App = () => {
 
         // Update tokenId
         setTokenId(TOTAL_TOKEN_AMOUNT - Number(body));
+      }
+    );
+
+    // Fetch random tokenURI
+    request(
+      'https://secure-shore-07844.herokuapp.com/randomTokenURI',
+      function FetchRandomTokenId(error, response, body) {
+        if (error != null) {
+          console.log(error);
+        }
+        
+        (async () => {
+          console.log(`API_GET_RESPONSE: OK`);
+          console.log(`RandomTokenId: ${body}`);
+          const _image = JSON.parse(body);
+          const response = await fetch(_image.tokenURI);
+          const image = await response.json();
+          isImageURI(image.image);
+        })();
       }
     );
   }, []);
@@ -139,7 +158,7 @@ const App = () => {
         (async function () {
           const response = await fetch(tokenURI_);
           const _image = await response.json();
-          console.log(_image.image);
+          console.log(`Your tokenURI ${_image.image}`);
           isImageURI(_image.image);
           isMinted(true);
         })();
@@ -181,6 +200,7 @@ const App = () => {
   /// ============ Render Stuff ============
 
   useEffect(() => {
+    console.log('🌈🌈🌈');
     checkIfWalletIsConnected();
   }, []);
 
@@ -217,22 +237,23 @@ const App = () => {
   }
 
   function NotYourNFT() {
-    return(
-      <div>
-      <div className='parent-div'>
-      </div>
-      <p className='sub-text'>Not your NFT</p>
+    return (
+      <div className="center">
+        <div>
+          <img alt="lol" src={imageURI} />
+        </div>
+        <p className="sub-text">Not your nft</p>
       </div>
     );
   }
 
   function YourNFT() {
-    return(
-      <div className='center'>
-      <div >
-        <img alt='lol' src={imageURI}/>
-      </div>
-      <p className='sub-text'>Your nft</p>
+    return (
+      <div className="center">
+        <div>
+          <img alt="lol" src={imageURI} />
+        </div>
+        <p className="sub-text">Your nft</p>
       </div>
     );
   }
@@ -259,9 +280,9 @@ const App = () => {
   function RenderTokenURI(props) {
     const isMinted = props.isMinted;
     if (isMinted) {
-    return <YourNFT/>; 
-  }
-    return <NotYourNFT/>;
+      return <YourNFT />;
+    }
+    return <NotYourNFT />;
   }
 
   /// ============ Return Page ============
@@ -273,17 +294,16 @@ const App = () => {
         <div className="header-container">
           <p className="header gradient-text">Rainbow NFTs</p>
           <p className="sub-text">Each &quot;uniquely&quot; generated & bitpacked on-chain.</p>
-          
+
           <RenderButton isConnected={boolBeans} />
         </div>
-     
-        <RenderTokenURI isMinted={minted}/>
-       
-       
-      <div className='texty'>
-        <p className="sub-text">
-          {tokenId}/{TOTAL_TOKEN_AMOUNT} NFTs left
-        </p>
+
+        <RenderTokenURI isMinted={minted} />
+
+        <div className="texty">
+          <p className="sub-text">
+            {tokenId}/{TOTAL_TOKEN_AMOUNT} NFTs left
+          </p>
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
