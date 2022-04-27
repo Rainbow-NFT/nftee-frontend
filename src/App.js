@@ -78,7 +78,7 @@ const App = () => {
         if (error != null) {
           console.log(error);
         }
-        
+
         (async () => {
           console.log(`API_GET_RESPONSE: OK`);
           console.log(`RandomTokenId: ${body}`);
@@ -158,7 +158,7 @@ const App = () => {
         (async function () {
           const response = await fetch(tokenURI_);
           const _image = await response.json();
-          console.log(`Your tokenURI ${_image.image}`);
+          console.log(`Your tokenURI ${tokenURI_}`);
           isImageURI(_image.image);
           isMinted(true);
         })();
