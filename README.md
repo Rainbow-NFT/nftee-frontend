@@ -1,7 +1,5 @@
 # Rainbow NFT Frontend
 
-### Name in progress
-
 ## Running
 
 `npm install`
