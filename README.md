@@ -2,13 +2,19 @@
 
 ### Name in progress
 
-## Getting Started
+## Running
 
-```
-1. git clone https://github.com/abrandec/rainbow-nft-frontend.git
-2. cd rainbow-nft-frontend
-3. npm install
-4. npm run start
-```
+`npm install`
+
+`npm run start`
+
+## Linting/Formating
+#### ESLint
+`npm run lint`
+
+#### Prettier
+`npm run prettier`
+
+
 ## Acknowledgements
 - [buildspace-nft-course-starter](https://github.com/buildspace/buildspace-nft-course-starter)
